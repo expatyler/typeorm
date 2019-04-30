@@ -49,8 +49,11 @@ var Connection = /** @class */ (function () {
         this.logger = new LoggerFactory().create(this.options.logger, this.options.logging);
         this.driver = new DriverFactory().create(this);
         this.manager = this.createEntityManager();
-        this.namingStrategy = options.namingStrategy || new DefaultNamingStrategy();
-        this.queryResultCache = options.cache ? new QueryResultCacheFactory(this).create() : undefined;
+        this.namingStrategy =
+            options.namingStrategy || new DefaultNamingStrategy();
+        this.queryResultCache = options.cache
+            ? new QueryResultCacheFactory(this).create()
+            : undefined;
         this.relationLoader = new RelationLoader(this);
         this.relationIdLoader = new RelationIdLoader(this);
         this.isConnected = false;
@@ -102,22 +105,22 @@ var Connection = /** @class */ (function () {
             return tslib_1.__generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log('entered connect');
+                        console.log("entered connect");
                         if (this.isConnected)
                             throw new CannotConnectAlreadyConnectedError(this.name);
                         // connect to the database via its driver
-                        console.log('driver establishing connection');
+                        console.log("driver establishing connection");
                         return [4 /*yield*/, this.driver.connect()];
                     case 1:
                         _a.sent();
-                        console.log('driver connection established');
+                        console.log("driver connection established");
                         if (!this.queryResultCache) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.queryResultCache.connect()];
                     case 2:
                         _a.sent();
                         _a.label = 3;
                     case 3:
-                        console.log('cache established');
+                        console.log("cache established");
                         // set connected status for the current connection
                         ObjectUtils.assign(this, { isConnected: true });
                         _a.label = 4;
@@ -125,11 +128,11 @@ var Connection = /** @class */ (function () {
                         _a.trys.push([4, 12, , 14]);
                         // build all metadatas registered in the current connection
                         this.buildMetadatas();
-                        console.log('built metadata');
+                        console.log("built metadata");
                         return [4 /*yield*/, this.driver.afterConnect()];
                     case 5:
                         _a.sent();
-                        console.log('after connect');
+                        console.log("after connect");
                         if (!this.options.dropSchema) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.dropDatabase()];
                     case 6:
@@ -143,14 +146,14 @@ var Connection = /** @class */ (function () {
                         _a.label = 9;
                     case 9:
                         // if option is set - automatically synchronize a schema
-                        console.log('migrating');
+                        console.log("migrating");
                         if (!this.options.migrationsRun) return [3 /*break*/, 11];
                         return [4 /*yield*/, this.runMigrations()];
                     case 10:
                         _a.sent();
                         _a.label = 11;
                     case 11:
-                        console.log('migrated');
+                        console.log("migrated");
                         return [3 /*break*/, 14];
                     case 12:
                         error_1 = _a.sent();
@@ -240,13 +243,19 @@ var Connection = /** @class */ (function () {
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, , 7, 9]);
-                        if (!(this.driver instanceof SqlServerDriver || this.driver instanceof MysqlDriver)) return [3 /*break*/, 4];
-                        databases_1 = this.driver.database ? [this.driver.database] : [];
+                        if (!(this.driver instanceof SqlServerDriver ||
+                            this.driver instanceof MysqlDriver)) return [3 /*break*/, 4];
+                        databases_1 = this.driver.database
+                            ? [this.driver.database]
+                            : [];
                         this.entityMetadatas.forEach(function (metadata) {
-                            if (metadata.database && databases_1.indexOf(metadata.database) === -1)
+                            if (metadata.database &&
+                                databases_1.indexOf(metadata.database) === -1)
                                 databases_1.push(metadata.database);
                         });
-                        return [4 /*yield*/, PromiseUtils.runInSequence(databases_1, function (database) { return queryRunner.clearDatabase(database); })];
+                        return [4 /*yield*/, PromiseUtils.runInSequence(databases_1, function (database) {
+                                return queryRunner.clearDatabase(database);
+                            })];
                     case 3:
                         _a.sent();
                         return [3 /*break*/, 6];
@@ -462,7 +471,8 @@ var Connection = /** @class */ (function () {
                     return metadata.tablePath === target;
                 }
                 else {
-                    return metadata.name === target || metadata.tableName === target;
+                    return (metadata.name === target ||
+                        metadata.tableName === target);
                 }
             }
             return false;
@@ -475,16 +485,23 @@ var Connection = /** @class */ (function () {
         var connectionMetadataBuilder = new ConnectionMetadataBuilder(this);
         var entityMetadataValidator = new EntityMetadataValidator();
         // create subscribers instances if they are not disallowed from high-level (for example they can disallowed from migrations run process)
+        console.log("building subscribers");
         var subscribers = connectionMetadataBuilder.buildSubscribers(this.options.subscribers || []);
         ObjectUtils.assign(this, { subscribers: subscribers });
+        console.log("subscribers built");
         // build entity metadatas
+        console.log("building entities");
         var entityMetadatas = connectionMetadataBuilder.buildEntityMetadatas(this.options.entities || []);
         ObjectUtils.assign(this, { entityMetadatas: entityMetadatas });
+        console.log("entities built");
         // create migration instances
+        console.log("building migrations");
         var migrations = connectionMetadataBuilder.buildMigrations(this.options.migrations || []);
         ObjectUtils.assign(this, { migrations: migrations });
+        console.log("migrations built");
         // validate all created entity metadatas to make sure user created entities are valid and correct
         entityMetadataValidator.validateMany(this.entityMetadatas.filter(function (metadata) { return metadata.tableType !== "view"; }), this.driver);
+        console.log("entities validated");
     };
     return Connection;
 }());
