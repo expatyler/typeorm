@@ -119,6 +119,7 @@ var Connection = /** @class */ (function () {
                         _a.sent();
                         _a.label = 3;
                     case 3:
+                        console.log('cache established');
                         // set connected status for the current connection
                         ObjectUtils_1.ObjectUtils.assign(this, { isConnected: true });
                         _a.label = 4;
@@ -126,9 +127,11 @@ var Connection = /** @class */ (function () {
                         _a.trys.push([4, 12, , 14]);
                         // build all metadatas registered in the current connection
                         this.buildMetadatas();
+                        console.log('built metadata');
                         return [4 /*yield*/, this.driver.afterConnect()];
                     case 5:
                         _a.sent();
+                        console.log('after connect');
                         if (!this.options.dropSchema) return [3 /*break*/, 7];
                         return [4 /*yield*/, this.dropDatabase()];
                     case 6:
@@ -141,12 +144,16 @@ var Connection = /** @class */ (function () {
                         _a.sent();
                         _a.label = 9;
                     case 9:
+                        // if option is set - automatically synchronize a schema
+                        console.log('migrating');
                         if (!this.options.migrationsRun) return [3 /*break*/, 11];
                         return [4 /*yield*/, this.runMigrations()];
                     case 10:
                         _a.sent();
                         _a.label = 11;
-                    case 11: return [3 /*break*/, 14];
+                    case 11:
+                        console.log('migrated');
+                        return [3 /*break*/, 14];
                     case 12:
                         error_1 = _a.sent();
                         // if for some reason build metadata fail (for example validation error during entity metadata check)
